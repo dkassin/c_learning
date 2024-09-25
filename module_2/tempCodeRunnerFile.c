@@ -2,7 +2,7 @@
 #include "stdlib.h"
 
 int main(int argc, char** argv) {
-    int default_val = 0;
+    char default_val[] = 0;
     int input = default_val;
     
     if (argc > 101) {

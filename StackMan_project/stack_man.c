@@ -2,15 +2,24 @@
 #include <stdlib.h>
 
 unsigned int max_stack_size = 65536;
-int64_t stack[max_stack_size];
+unsigned int stack[65536];
 int stack_top = -1;
 
-void push(int64_t value) {
+void push(unsigned int value) {
     if (stack_top < max_stack_size - 1) {
         stack[++stack_top] = value;
     } else {
         printf("Error: Stack overflow\n");
         exit(2);
+    }
+}
+
+int64_t pop() {
+    if (stack_top >= 0) {
+        return stack[stack_top--];
+    } else {
+        printf("Error: Stack underflow\n");
+        exit(1);
     }
 }
 
@@ -55,37 +64,61 @@ void interpreter(int c) {
             int64_t n = stack[stack_top];
             pop();
             if (n >= 2) {
-                //  code to figure this out 
-            } else {
-                printf("Error: Stack underflow from +\n");
+                if (stack_top + 1 < n) {
+                printf("Error: Stack underflow from >\n");
                 exit(1);
+                }
+            int64_t temp[n];
+            
+            for (int i = 0; i < n; i++) {
+                temp[i] = pop();
             }
+            // stack = ABC now temp = CBA
+            int64_t last = temp[0];
+            push(last);
+            for (int i = n -1; i >0; i--) {
+                push(temp[i]);
+                }
             break;
+            }
+        case '<':
+            int64_t n = stack[stack_top];
+            pop();
+            if (n >= 2) {
+                if (stack_top + 1 < n) {
+                printf("Error: Stack underflow from >\n");
+                exit(1);
+            } 
+            int64_t temp[n];
+            
+            for (int i = 0; i < n; i++) {
+                temp[i] = pop();
+            }
+            // stack = ABC now temp = CBA
+            int64_t first = temp[n-1];
 
+            for (int i = n-2; i >= 0; i--) {
+                push(temp[i]);
+                }
+        
+            push(first);
+            break;
+            }
+        case ')':   
+            break;
+        case '(':
 
-
-
-
-    }            
+    }    
 }
 
-
-int64_t pop() {
-    if (stack_top >= 0) {
-        return stack[stack_top--];
-    } else {
-        printf("Error: Stack underflow\n");
-        exit(1);
-    }
-}
 
 
 
 int file_parse(char *file_name)
 {
-    FILE *fp;       //Variable to represent open file
+    FILE *fp;
 
-    fp = fopen(file_name, "r"); // Open file for reading
+    fp = fopen(file_name, "r"); 
     
     if (fp == NULL) {
         printf("Error: Could not open file %s\n", file_name);
@@ -97,18 +130,18 @@ int file_parse(char *file_name)
         if (c == '0' || c == '+' || c == '_' || c == '~' ||
             c == '?' || c == '_' || c == '(' || c == ')' ||
             c == '~') {
-                // Search a struct what c is to a method
+                interpreter(c);
             } 
         }
-        fclose(fp);     // Close the file when done
+        fclose(fp);
         return 0;
 }   
 
-
 int main(int argc, char *argv[])
 {
-    for (int i = 0; i < argc; i++) {
-        printf("arg %d: %s\n", i, argv[i]);
+    if (argc > 1) {
+        file_parse(argv[1]);
+        return 0;
     }
-
+    return 1;
 }

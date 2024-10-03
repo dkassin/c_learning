@@ -14,7 +14,7 @@ void push(unsigned int value) {
     }
 }
 
-int64_t pop() {
+unsigned int pop() {
     if (stack_top >= 0) {
         return stack[stack_top--];
     } else {
@@ -104,43 +104,22 @@ void interpreter(int c) {
             push(first);
             break;
             }
-        case ')':   
-            break;
-        case '(':
 
+            // Struggling to figure out how to implement the while loop ()
+            // Ran out of time
+            // i think i need the pgoram variable to be able to loop back and forth in the program string
     }    
 }
 
-
-
-
-int file_parse(char *file_name)
-{
-    FILE *fp;
-
-    fp = fopen(file_name, "r"); 
-    
-    if (fp == NULL) {
-        printf("Error: Could not open file %s\n", file_name);
-        return 1;
-    }
-
-    int c;
-    while ((c = fgetc(fp)) != EOF){
-        if (c == '0' || c == '+' || c == '_' || c == '~' ||
-            c == '?' || c == '_' || c == '(' || c == ')' ||
-            c == '~') {
-                interpreter(c);
-            } 
-        }
-        fclose(fp);
-        return 0;
-}   
-
 int main(int argc, char *argv[])
-{
+{   
     if (argc > 1) {
-        file_parse(argv[1]);
+        char* program =argv[1];
+        int i = 0;
+        while (program[i] != '\0'){
+            interpreter(program[i]);
+            i++;
+        }   
         return 0;
     }
     return 1;
